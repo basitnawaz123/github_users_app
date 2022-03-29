@@ -1,4 +1,5 @@
 import {
+  Alert,
   Avatar,
   Button,
   Card,
@@ -80,70 +81,74 @@ const ResultComponent: FC = ({}) => {
             <Button variant='contained'>Back To Home</Button>
           </Link>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-              <TableHead>
-                <TableRow
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                  <TableCell component='th' scope='row'>
-                    <TableSortLabel onClick={sortRecord} direction='desc'>
-                      Login
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell component='th' scope='row'>
-                    Type
-                  </TableCell>
-                  <TableCell component='th' scope='row'>
-                    Avatar
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(rowsPerPage > 0
-                  ? users.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : users
-                ).map((row) => (
-                  <TableRow key={row.login}>
+            {users.length > 0 ? (
+              <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                <TableHead>
+                  <TableRow
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                     <TableCell component='th' scope='row'>
-                      {row.login}
+                      <TableSortLabel onClick={sortRecord} direction='desc'>
+                        Login
+                      </TableSortLabel>
                     </TableCell>
-                    <TableCell style={{ width: 160 }}>{row.type}</TableCell>
-                    <TableCell style={{ width: 160 }}>
-                      <Avatar
-                        alt={row.login}
-                        src={row.avatar_url}
-                        sx={{ width: 50, height: 50 }}
-                      />
+                    <TableCell component='th' scope='row'>
+                      Type
+                    </TableCell>
+                    <TableCell component='th' scope='row'>
+                      Avatar
                     </TableCell>
                   </TableRow>
-                ))}
+                </TableHead>
+                <TableBody>
+                  {(rowsPerPage > 0
+                    ? users.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                    : users
+                  ).map((row) => (
+                    <TableRow key={row.login}>
+                      <TableCell component='th' scope='row'>
+                        {row.login}
+                      </TableCell>
+                      <TableCell style={{ width: 160 }}>{row.type}</TableCell>
+                      <TableCell style={{ width: 160 }}>
+                        <Avatar
+                          alt={row.login}
+                          src={row.avatar_url}
+                          sx={{ width: 50, height: 50 }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
 
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
+                <TableFooter>
+                  <TableRow>
+                    <TablePagination
+                      rowsPerPageOptions={[9, 18, 27]}
+                      count={users.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      SelectProps={{
+                        inputProps: {
+                          "aria-label": "rows per page",
+                        },
+                      }}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
                   </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    rowsPerPageOptions={[9, 18, 27]}
-                    count={users.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    SelectProps={{
-                      inputProps: {
-                        "aria-label": "rows per page",
-                      },
-                    }}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
-                </TableRow>
-              </TableFooter>
-            </Table>
+                </TableFooter>
+              </Table>
+            ) : (
+              <Alert severity='error'>No Record Found.!</Alert>
+            )}
           </TableContainer>
         </Grid>
       </Grid>
