@@ -1,44 +1,18 @@
-import {
-  Alert,
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  CircularProgress,
-  Grid,
-  Pagination,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TableRow,
-  TableSortLabel,
-} from "@mui/material";
-import TablePagination from "@mui/material/TablePagination";
+import { Avatar, Button, CircularProgress, Grid } from "@mui/material";
 import axios from "axios";
 
 import React, { FC, Fragment, useEffect, useState } from "react";
 import IUserData from "./interfaces";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-
-// interface userProps {
-//   users: IUserData[];
-// }
+import { Link, useSearchParams } from "react-router-dom";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 const ResultComponent: FC = ({}) => {
-  // let count = users.length;
-
   const [user] = useSearchParams();
   const searchText = user.get("user");
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(9);
   const [users, SetUsers] = useState<Array<IUserData>>([]);
   const [loading, SetLoading] = useState(false);
-  const [order, SetOrder] = useState("asc");
+
   const fetchUsers = () => {
     SetLoading(true);
     axios
@@ -61,21 +35,24 @@ const ResultComponent: FC = ({}) => {
       });
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
+  const columns: GridColDef[] = [
+    { field: "login", headerName: "Login", width: 400 },
+    { field: "type", headerName: "Type", width: 400, sortable: false },
+    {
+      field: "avatar_url",
+      headerName: "Avatar",
+      width: 200,
+      sortable: false,
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
-
-  const sortRecord = () => {};
+      renderCell: (params) => (
+        <Avatar
+          src={params.value}
+          variant='rounded'
+          sx={{ width: 50, height: 50 }}
+        />
+      ),
+    },
+  ];
 
   useEffect(() => {
     fetchUsers();
@@ -87,85 +64,30 @@ const ResultComponent: FC = ({}) => {
         container
         direction='row'
         justifyContent='center'
-        alignItems='center'
-        spacing={3}>
+        alignItems='center'>
         <Grid className='table' item xs={10}>
           <Link to='/'>
-            <Button variant='contained'>Back To Home</Button>
+            <Button variant='contained'>Return to Home</Button>
           </Link>
-          <TableContainer component={Paper}>
-            {users.length > 0 ? (
-              <Table sx={{ minWidth: 650 }} aria-label='simple table'>
-                <TableHead>
-                  <TableRow
-                    sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                    }}>
-                    <TableCell component='th' scope='row'>
-                      <TableSortLabel onClick={sortRecord} direction='desc'>
-                        Login
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell component='th' scope='row'>
-                      Type
-                    </TableCell>
-                    <TableCell component='th' scope='row'>
-                      Avatar
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  {(rowsPerPage > 0
-                    ? users.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                    : users
-                  ).map((row) => (
-                    <TableRow key={row.login}>
-                      <TableCell component='th' scope='row'>
-                        {row.login}
-                      </TableCell>
-                      <TableCell style={{ width: 160 }}>{row.type}</TableCell>
-                      <TableCell style={{ width: 160 }}>
-                        <Avatar
-                          alt={row.login}
-                          src={row.avatar_url}
-                          sx={{ width: 50, height: 50 }}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                <TableFooter>
-                  <TableRow>
-                    <TablePagination
-                      rowsPerPageOptions={[9, 18, 27]}
-                      count={users.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      SelectProps={{
-                        inputProps: {
-                          "aria-label": "rows per page",
-                        },
-                      }}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                  </TableRow>
-                </TableFooter>
-              </Table>
-            ) : (
-              <Alert severity='error'>No Record Found.!</Alert>
-            )}
-          </TableContainer>
+          <div style={{ height: 600, background: "white", marginTop: 10 }}>
+            <DataGrid
+              initialState={{
+                sorting: {
+                  sortModel: [{ field: "login", sort: "asc" }],
+                },
+              }}
+              sx={{
+                boxShadow: 2,
+                "& .MuiDataGrid-cell:hover": {
+                  color: "primary.main",
+                },
+              }}
+              rows={users}
+              columns={columns}
+              pageSize={9}
+              rowsPerPageOptions={[9]}
+            />
+          </div>
         </Grid>
       </Grid>
     </Fragment>

@@ -9,9 +9,6 @@ import {
   Grid,
   TextField,
 } from "@mui/material";
-
-import ResultComponent from "./ResultComponent";
-import IUserData from "./interfaces";
 import { useNavigate } from "react-router-dom";
 const SearchComponent = () => {
   let navigate = useNavigate();
@@ -24,7 +21,7 @@ const SearchComponent = () => {
   };
   const fetchUsers = async () => {
     SetLoading(true);
-    if (searchText == "") {
+    if (searchText === "") {
       setError(true);
       SetLoading(false);
     } else {

@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Route, Router, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import ResultComponent from "../../../ResultComponent";
 import SearchComponent from "../../../SearchComponent";
 
