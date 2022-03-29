@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import TablePagination from "@mui/material/TablePagination";
 import axios from "axios";
-import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
+
 
 import React, { FC, Fragment, useEffect, useState } from "react";
 import IUserData from "./interfaces";
@@ -37,12 +37,28 @@ const ResultComponent: FC = ({}) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(9);
   const [users, SetUsers] = useState<Array<IUserData>>([]);
+  const [order, SetOrder] = useState("asc");
   const fetchUsers = () => {
     axios
       .get(`https://api.github.com/search/users?q=${searchText}`)
       .then((res) => {
         const users_data = res.data.items;
-        SetUsers(users_data);
+        const sortedData = users_data.sort((a: any, b: any) => {
+          const loginA = a.login.toUpperCase();
+          const loginB = b.login.toLowerCase();
+
+          if (loginA > loginB) {
+            return 1;
+          }
+
+          if (loginA < loginB) {
+            return -1;
+          }
+
+          return 0;
+        });
+
+        SetUsers(sortedData);
       });
   };
 
@@ -61,7 +77,7 @@ const ResultComponent: FC = ({}) => {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
   const sortRecord = () => {
-    alert("sorted");
+    console.log("hello");
   };
 
   useEffect(() => {
