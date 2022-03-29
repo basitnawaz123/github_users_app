@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Grid,
   Pagination,
   Paper,
@@ -18,7 +19,6 @@ import {
 } from "@mui/material";
 import TablePagination from "@mui/material/TablePagination";
 import axios from "axios";
-
 
 import React, { FC, Fragment, useEffect, useState } from "react";
 import IUserData from "./interfaces";
@@ -37,28 +37,27 @@ const ResultComponent: FC = ({}) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(9);
   const [users, SetUsers] = useState<Array<IUserData>>([]);
+  const [loading, SetLoading] = useState(false);
   const [order, SetOrder] = useState("asc");
   const fetchUsers = () => {
+    SetLoading(true);
     axios
       .get(`https://api.github.com/search/users?q=${searchText}`)
       .then((res) => {
         const users_data = res.data.items;
+
         const sortedData = users_data.sort((a: any, b: any) => {
-          const loginA = a.login.toUpperCase();
-          const loginB = b.login.toLowerCase();
-
-          if (loginA > loginB) {
-            return 1;
-          }
-
-          if (loginA < loginB) {
+          if (a.login < b.login) {
             return -1;
           }
-
+          if (a.login > b.login) {
+            return 1;
+          }
           return 0;
         });
 
         SetUsers(sortedData);
+        SetLoading(false);
       });
   };
 
@@ -76,9 +75,7 @@ const ResultComponent: FC = ({}) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
-  const sortRecord = () => {
-    console.log("hello");
-  };
+  const sortRecord = () => {};
 
   useEffect(() => {
     fetchUsers();
@@ -101,7 +98,9 @@ const ResultComponent: FC = ({}) => {
               <Table sx={{ minWidth: 650 }} aria-label='simple table'>
                 <TableHead>
                   <TableRow
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                    sx={{
+                      "&:last-child td, &:last-child th": { border: 0 },
+                    }}>
                     <TableCell component='th' scope='row'>
                       <TableSortLabel onClick={sortRecord} direction='desc'>
                         Login
@@ -115,6 +114,7 @@ const ResultComponent: FC = ({}) => {
                     </TableCell>
                   </TableRow>
                 </TableHead>
+
                 <TableBody>
                   {(rowsPerPage > 0
                     ? users.slice(
