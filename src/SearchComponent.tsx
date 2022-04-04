@@ -54,8 +54,15 @@ const SearchComponent = () => {
                 fullWidth
                 label='Enter your Name'
                 onChange={handleChange}
+                // data-testid='searchInput'
+                inputProps={{ "data-testid": "searchInput" }}
               />
-              <Button onClick={fetchUsers} variant='contained' fullWidth>
+              <Button
+                title='SearchButton'
+                onClick={fetchUsers}
+                variant='contained'
+                data-testid='searchButton'
+                fullWidth>
                 {loading ? <CircularProgress color='inherit' /> : "Search"}
               </Button>
             </CardContent>

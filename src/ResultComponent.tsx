@@ -1,4 +1,4 @@
-import { Avatar, Button, CircularProgress, Grid } from "@mui/material";
+import { Avatar, Button, Grid } from "@mui/material";
 import axios from "axios";
 
 import React, { FC, Fragment, useEffect, useState } from "react";
@@ -86,6 +86,7 @@ const ResultComponent: FC = ({}) => {
               columns={columns}
               pageSize={9}
               rowsPerPageOptions={[9]}
+              data-testid='users_table'
             />
           </div>
         </Grid>
